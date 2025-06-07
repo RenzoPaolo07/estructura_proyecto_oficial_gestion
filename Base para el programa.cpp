@@ -23,7 +23,7 @@ void insertar (TablaHash& tablaHash, int id, string nombre){
 	tablaHash.tabla[indice].id = id;
 	tablaHash.tabla[indice].nombre=nombre;
 	tablaHash.tabla[indice].ocupado = true;
-	cout<<"Estudiante "<<nombre<<" insertado en el índice "<<indice<<endl;
+	cout<<"Estudiante "<<nombre<<" insertado en el Ã­ndice "<<indice<<endl;
 }
 
 string buscar(const TablaHash& tablaHash, int id){
@@ -46,7 +46,7 @@ void mostrar(const TablaHash& tablaHash){
 }
 //gcgfigfi
 void mostrarMenu(){
-	cout<<"\n--- Menú de Opciones---\n";
+	cout<<"\n--- MenÃº de Opciones---\n";
 	cout<<"1. Insertar estudiante\n";
 	cout<<"2. Buscar estudiante\n";
 	cout<<"3. Mostrar tabla hash\n";
@@ -65,7 +65,7 @@ int main(){
 	do {
 		mostrarMenu();
 		cin>>opcion;
-		
+		//Pruebas 2
 		switch (opcion){
 			case 1:
 				cout<<"Ingrese el ID del estudiante: ";
@@ -87,7 +87,7 @@ int main(){
 				cout<<"Hasta luego!"<<endl;
 				break;
 			default:
-				cout<<"Opcion no válida. Intente nuevamente\n";
+				cout<<"Opcion no vÃ¡lida. Intente nuevamente\n";
 		}
 	} while (opcion !=4);
 	return 0;
