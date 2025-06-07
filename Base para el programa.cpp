@@ -44,7 +44,7 @@ void mostrar(const TablaHash& tablaHash){
 		}
 	}
 }
-
+//gcgfigfi
 void mostrarMenu(){
 	cout<<"\n--- Menú de Opciones---\n";
 	cout<<"1. Insertar estudiante\n";
