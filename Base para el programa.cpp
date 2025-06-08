@@ -151,9 +151,63 @@ void mostrarCola() {
         actual = actual->siguiente;
     }
 }
+//pilas
+void push(Proceso*& pila, int id, const string& nombre, int prioridad) {
+    Proceso* nuevo = new Proceso;
+    nuevo->id = id;
+    nuevo->nombre = nombre;
+    nuevo->prioridad = prioridad;
+    
+    cout << "Ingrese el porcentaje de memoria que usa el proceso: ";
+    cin >> nuevo->porcentajeMemoria;
 
+    nuevo->siguiente = pila;
+    pila = nuevo;
+
+    cout << "Memoria asignada al proceso correctamente.\n";
+}
+
+void pop(Proceso*& pila) {
+    if (pila == NULL) {
+        cout << "No hay procesos en la pila de memoria.\n";
+        return;
+    }
+
+    Proceso* temp = pila;
+    pila = pila->siguiente;
+
+    cout << "Memoria liberada del proceso:\n";
+    cout << "ID: " << temp->id << " | Nombre: " << temp->nombre << " | Memoria: " << temp->porcentajeMemoria << "%\n";
+
+    delete temp;
+}
+
+void mostrarPila(Proceso* pila) {
+    if (pila == NULL) {
+        cout << "La pila de memoria esta vacia.\n";
+        return;
+    }
+
+    Proceso* temp = pila;
+    float memoriaTotal = 0;
+
+    cout << "\n--- Estado actual de la memoria (Pila) ---\n";
+    while (temp != NULL) {
+        cout << "ID: " << temp->id << " | Nombre: " << temp->nombre 
+             << " | Prioridad: " << temp->prioridad 
+             << " | Memoria: " << temp->porcentajeMemoria << "%\n";
+        memoriaTotal += temp->porcentajeMemoria;
+        temp = temp->siguiente;
+    }
+
+    cout << "Memoria total en uso: " << memoriaTotal << "%\n";
+    if (memoriaTotal > 100) {
+        cout << "Advertencia: Memoria excedida.\n";
+    }
+}
 int main() {
     Proceso* lista = NULL;
+    Proceso* pilaMemoria = NULL;
     int opcion, id, prioridad;
     string nombre;
 
@@ -166,7 +220,10 @@ int main() {
         cout << "5. Encolar proceso\n";
         cout << "6. Ejecutar proceso\n";
         cout << "7. Mostrar cola\n";
-        cout << "8. Salir\n";
+        cout << "8. Asignar memoria a proceso (push)\n";
+        cout << "9. Liberar memoria del ultimo proceso (pop)\n";
+        cout << "10. Mostrar pila de memoria\n";
+        cout << "11. Salir\n";
         cout << "Seleccione una opcion: ";
         cin >> opcion;
 
@@ -217,12 +274,22 @@ int main() {
                 mostrarCola();
                 break;
             case 8:
+                
+                push(pilaMemoria, id, nombre, prioridad);
+                break;
+            case 9:
+                pop(pilaMemoria);
+                break;
+            case 10:
+                mostrarPila(pilaMemoria);
+                break;
+            case 11:
                 cout << "Saliendo...\n";
                 break;
             default:
                 cout << "Opcion invalida.\n";
         }
-    } while (opcion != 8);
+    } while (opcion != 11);
 
     return 0;
 }
