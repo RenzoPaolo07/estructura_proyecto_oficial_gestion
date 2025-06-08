@@ -79,6 +79,78 @@ void eliminarProceso(Proceso*& lista, int id) {
     delete actual;
     cout << "Proceso eliminado correctamente.\n";
 }
+Proceso* buscarProceso(Proceso* lista, int id) {
+    Proceso* actual = lista;
+    while (actual != NULL) {
+        if (actual->id == id) return actual;
+        actual = actual->siguiente;
+    }
+    return NULL;
+}
+
+void modificarPrioridad(Proceso* lista, int id, int nuevaPrioridad) {
+    Proceso* p = buscarProceso(lista, id);
+    if (p != NULL) {
+        p->prioridad = nuevaPrioridad;
+        cout << "Prioridad modificada correctamente.\n";
+    } else {
+        cout << "Proceso no encontrado.\n";
+    }
+}
+
+//Colas
+struct NodoCola {
+    Proceso* proceso;
+    NodoCola* siguiente;
+};
+
+NodoCola* frente = NULL;
+
+
+void encolar(Proceso* p) {
+    NodoCola* nuevo = new NodoCola;
+    nuevo->proceso = p;
+    nuevo->siguiente = NULL;
+
+    if (frente == NULL || p->prioridad > frente->proceso->prioridad) {
+        nuevo->siguiente = frente;
+        frente = nuevo;
+    } else {
+        NodoCola* actual = frente;
+        while (actual->siguiente != NULL && p->prioridad <= actual->siguiente->proceso->prioridad) {
+            actual = actual->siguiente;
+        }
+        nuevo->siguiente = actual->siguiente;
+        actual->siguiente = nuevo;
+    }
+}
+
+
+void ejecutarProceso() {
+    if (frente == NULL) {
+        cout << "No hay procesos en la cola.\n";
+        return;
+    }
+
+    cout << "Ejecutando proceso ID: " << frente->proceso->id
+         << ", Nombre: " << frente->proceso->nombre << endl;
+
+    NodoCola* temp = frente;
+    frente = frente->siguiente;
+    delete temp;
+}
+
+
+void mostrarCola() {
+    NodoCola* actual = frente;
+    cout << "\nCola de procesos:\n";
+    while (actual != NULL) {
+        cout << "ID: " << actual->proceso->id;
+        cout << ", Nombre: " << actual->proceso->nombre;
+        cout << ", Prioridad: " << actual->proceso->prioridad << endl;
+        actual = actual->siguiente;
+    }
+}
 
 int main() {
     Proceso* lista = NULL;
@@ -90,15 +162,19 @@ int main() {
         cout << "1. Agregar proceso\n";
         cout << "2. Mostrar procesos\n";
         cout << "3. Eliminar proceso\n";
-        cout << "4. Salir\n";
+        cout << "4. Modificar prioridad\n";
+        cout << "5. Encolar proceso\n";
+        cout << "6. Ejecutar proceso\n";
+        cout << "7. Mostrar cola\n";
+        cout << "8. Salir\n";
         cout << "Seleccione una opcion: ";
         cin >> opcion;
 
         switch (opcion) {
             case 1:
-                cout << "Ingrese ID: "; cin >> id;
-                cout << "Ingrese nombre: "; cin.ignore(); getline(cin, nombre);
-                cout << "Ingrese prioridad: "; cin >> prioridad;
+                cout << "Ingrese ID: "; cin >> id; cin.ignore();
+                cout << "Ingrese nombre: "; getline(cin, nombre);
+                
                 do {
                     cout << "Ingrese prioridad del 1 al 5: ";
                     cin >> prioridad;
@@ -118,12 +194,35 @@ int main() {
                 eliminarProceso(lista, id);
                 break;
             case 4:
+                cout << "Ingrese ID del proceso a modificar: ";
+                cin >> id;
+                cout << "Ingrese nueva prioridad: ";
+                cin >> prioridad;
+                modificarPrioridad(lista, id, prioridad);
+                break;
+            case 5: {
+                cout << "ID del proceso a encolar: ";
+                cin >> id;
+                Proceso* p = buscarProceso(lista, id);
+                if (p != NULL)
+                    encolar(p);
+                else
+                    cout << "Proceso no encontrado.\n";
+                break;
+            }
+            case 6:
+                ejecutarProceso();
+                break;
+            case 7:
+                mostrarCola();
+                break;
+            case 8:
                 cout << "Saliendo...\n";
                 break;
             default:
                 cout << "Opcion invalida.\n";
         }
-    } while (opcion != 4);
+    } while (opcion != 8);
 
     return 0;
 }
