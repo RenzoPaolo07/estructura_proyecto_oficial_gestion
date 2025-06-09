@@ -5,70 +5,76 @@
 using namespace std;
 
 struct Proceso {
-    int id;
-    string nombre;
-    int prioridad;
-    float porcentajeMemoria; 
-    Proceso* siguiente;
+    int id; 
+    string nombre;  
+    int prioridad; //prioridad del 1 al 5
+    float porcentajeMemoria; //porcentaje de memoria que ocupa el proceso
+    Proceso* siguiente; //puntero al siguiente nodo
 };
 
 
 void insertarProceso(Proceso*& lista, int id, const string& nombre, int prioridad) {
-    Proceso* nuevo = new Proceso;
+ // Explicación de parametros: 
+
+    Proceso* nuevo = new Proceso; //Creación de un nuevo nodo
     nuevo->id = id;
     nuevo->nombre = nombre;
     nuevo->prioridad = prioridad;
 
-    nuevo->siguiente = NULL;
+    nuevo->siguiente = NULL; //Se define que el puntero que apunta al siguiente nodo de "nuevo" apunta a nulo
 
     if (lista == NULL) {
-        lista = nuevo;
+        lista = nuevo; //si la lista esta vacia, el nodo nuevo se vuelve en el primero
     } else {
-        Proceso* temp = lista;
-        while (temp->siguiente != NULL) {
+     //caso contrario recorremos toda la lista 
+        Proceso* temp = lista; //el puntero temp apunta al inicio
+        while (temp->siguiente != NULL) { //mientras el nodo siguiente a temp no sea nulo se repetira el bucle
             temp = temp->siguiente;
         }
-        temp->siguiente = nuevo;
+     //al finaliar el bucle, temp apunta al final de la lista
+        temp->siguiente = nuevo;// esto enlaza el nuevo nodo al final
     }
 }
 
 void mostrarProcesos(const Proceso* lista) {
-    const Proceso* temp = lista;
-    float totalMemoria = 0;
+    const Proceso* temp = lista; //se declara el puntero temp que recorrera la lista
+    
 
     cout << "\nProcesos actuales:\n";
-    while (temp != NULL) {
+    while (temp != NULL) { // en este se recorre todos los nodos mostrando sus datos: id, nombre, prioridad
         cout << "ID: " << temp->id ;
         cout << " | Nombre: " << temp->nombre ;
         cout << " | Prioridad: " << temp->prioridad ;
         
-        temp = temp->siguiente;
+        temp = temp->siguiente; //Avanamos al siguiente nodo en cada iteracion
     }
 
     
 }
 
 void eliminarProceso(Proceso*& lista, int id) {
-    Proceso* actual = lista;
-    Proceso* anterior = NULL;
+    Proceso* actual = lista; //declaramos un puntero que recorrera la lista
+    Proceso* anterior = NULL; //declaramos un puntero al nodo anterior que sera inicializara en NULL
 
-    while (actual != NULL && actual->id != id) {
+    while (actual != NULL && actual->id != id) { 
         anterior = actual;
         actual = actual->siguiente;
-    }
+    } //el bucle se repetira hasta encontrar el nodo con el ID buscado
+     //el anterior se guardara como el actual y el puntero actual avanzara al siguiente  
+ 
 
-    if (actual == NULL) {
+    if (actual == NULL) { //si llegamos al final sin encontrar el ID se imprimira el siguiente mensaje
         cout << "Proceso no encontrado.\n";
         return;
     }
 
-    if (anterior == NULL) {
-        lista = actual->siguiente;
+    if (anterior == NULL) { //En caso de que el nodo a eliminar esta al inicio
+        lista = actual->siguiente;//el inicio de la lista pasa al siguiente nodo
     } else {
-        anterior->siguiente = actual->siguiente;
+        anterior->siguiente = actual->siguiente; //el nodo anterior deja de apuntar al nodo actual y apunta al nodo siguiente del actual
     }
 
-    delete actual;
+    delete actual; //eliminamos el nodo actual
     cout << "Proceso eliminado correctamente.\n";
 }
 Proceso* buscarProceso(Proceso* lista, int id) {
