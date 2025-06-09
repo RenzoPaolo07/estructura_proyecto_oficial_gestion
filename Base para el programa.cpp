@@ -78,17 +78,17 @@ void eliminarProceso(Proceso*& lista, int id) {
     cout << "Proceso eliminado correctamente.\n";
 }
 Proceso* buscarProceso(Proceso* lista, int id) {
-    Proceso* actual = lista;
-    while (actual != NULL) {
-        if (actual->id == id) return actual;
+    Proceso* actual = lista;  // Creamos un puntero que apunta al inicio de la lista
+    while (actual != NULL) { // recorremos la lista mientras no lleguemos al final
+        if (actual->id == id) return actual; //Si encontramos el proceso con el ID buscado, devolvemos el nodo actual
         actual = actual->siguiente;
     }
-    return NULL;
+    return NULL;  // devolvemos NULL, si llegamos al final y no se encontro el proceso 
 }
 
 void modificarPrioridad(Proceso* lista, int id, int nuevaPrioridad) {
-    Proceso* p = buscarProceso(lista, id);
-    if (p != NULL) {
+    Proceso* p = buscarProceso(lista, id); //Utiliamos la funcion buscar proceso para encontrar el nodo con el id 
+    if (p != NULL) { // Si el proceso fue encontrado modificamos la prioridad
         p->prioridad = nuevaPrioridad;
         cout << "Prioridad modificada correctamente.\n";
     } else {
@@ -98,56 +98,58 @@ void modificarPrioridad(Proceso* lista, int id, int nuevaPrioridad) {
 
 //Colas
 struct NodoCola {
-    Proceso* proceso;
-    NodoCola* siguiente;
+    Proceso* proceso; // puntero a un proceso que está en la cola
+    NodoCola* siguiente; //puntero al nodo siguiente
 };
 
-NodoCola* frente = NULL;
+NodoCola* frente = NULL; //definimos un puntero global al primer nodo de la cola
 
 
 void encolar(Proceso* p) {
-    NodoCola* nuevo = new NodoCola;
-    nuevo->proceso = p;
-    nuevo->siguiente = NULL;
+    NodoCola* nuevo = new NodoCola; //creamos un nuevo nodo
+    nuevo->proceso = p; //asignamos el proceso al nodo
+    nuevo->siguiente = NULL; // inicialmente el nodo no apunta a otro
 
     if (frente == NULL || p->prioridad > frente->proceso->prioridad) {
         nuevo->siguiente = frente;
         frente = nuevo;
+     // Si la cola está vacía o el proceso tiene mayor prioridad que el primero entonces se inserta el nuevo nodo al inicio
     } else {
         NodoCola* actual = frente;
         while (actual->siguiente != NULL && p->prioridad <= actual->siguiente->proceso->prioridad) {
             actual = actual->siguiente;
         }
+     //con el bucle while recorremos mientras no lleguemos al final y la prioridad del nuevo sea menor o igual
         nuevo->siguiente = actual->siguiente;
-        actual->siguiente = nuevo;
+        actual->siguiente = nuevo; // insertamos el nuevo nodo entre actual y su siguiente
     }
 }
 
 
 void ejecutarProceso() {
-    if (frente == NULL) {
+    if (frente == NULL) { //en caso la cola este vacia
         cout << "No hay procesos en la cola.\n";
         return;
     }
-
+//mostramos la informacion del proceso
     cout << "Ejecutando proceso ID: " << frente->proceso->id
          << ", Nombre: " << frente->proceso->nombre << endl;
 
-    NodoCola* temp = frente;
-    frente = frente->siguiente;
-    delete temp;
+    NodoCola* temp = frente; //este puntero tempporal apunta al frene
+    frente = frente->siguiente; //avanamos el frene al siguiente nodo
+    delete temp; //eliminamos el nodo temporal ejecutado
 }
 
 
 void mostrarCola() {
-    NodoCola* actual = frente;
+    NodoCola* actual = frente; // Creamos un puntero para recorrer la cola desde el frente
     cout << "\nCola de procesos:\n";
     while (actual != NULL) {
         cout << "ID: " << actual->proceso->id;
         cout << ", Nombre: " << actual->proceso->nombre;
         cout << ", Prioridad: " << actual->proceso->prioridad << endl;
         actual = actual->siguiente;
-    }
+    } //con el bucle se muestran los datos de cada proceso
 }
 //pilas
 void push(Proceso*& pila, int id, const string& nombre, int prioridad) {
@@ -227,7 +229,7 @@ int main() {
 
         switch (opcion) {
             case 1:
-                cout << "Ingrese ID: "; cin >> id; cin.ignore();
+                cout << "Ingrese ID: "; cin >> id; cin.ignore(); //Ingresar ID, ignorando los espacio
                 cout << "Ingrese nombre: "; getline(cin, nombre);
                 
                 do {
@@ -236,8 +238,8 @@ int main() {
                     if (prioridad < 1 || prioridad > 5) {
                         cout << "La prioridad debe estar entre 1 y 5.\n";
                     }
-                } while (prioridad < 1 || prioridad > 5);
-                insertarProceso(lista, id, nombre, prioridad);
+                } while (prioridad < 1 || prioridad > 5); //el bucle do while pedira que ingreses la prioridad mientras no sea del 1 al 5
+                insertarProceso(lista, id, nombre, prioridad); //llamamos a la funcion para insertar los procesos
                 mostrarProcesos(lista);
                 break;
             case 2:
