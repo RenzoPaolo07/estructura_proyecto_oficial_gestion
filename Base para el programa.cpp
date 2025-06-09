@@ -152,56 +152,60 @@ void mostrarCola() {
     } //con el bucle se muestran los datos de cada proceso
 }
 //pilas
+// Definimos la funcion que asignara memoria a un proceso usando pilas (Push)
 void push(Proceso*& pila, int id, const string& nombre, int prioridad) {
-    Proceso* nuevo = new Proceso;
-    nuevo->id = id;
+    Proceso* nuevo = new Proceso; // Se crea un nuevo nodo de tipo Proceso
+    nuevo->id = id;  // Se asigna los datos al nodo
     nuevo->nombre = nombre;
     nuevo->prioridad = prioridad;
     
-    cout << "Ingrese el porcentaje de memoria que usa el proceso: ";
+    cout << "Ingrese el porcentaje de memoria que usa el proceso: "; // Se solicita al usuario que ingrese el porcentaje de memoria que usará el proceso
     cin >> nuevo->porcentajeMemoria;
 
-    nuevo->siguiente = pila;
+    nuevo->siguiente = pila; // El nuevo nodo se coloca al inicio de la pila
     pila = nuevo;
 
-    cout << "Memoria asignada al proceso correctamente.\n";
+    cout << "Memoria asignada al proceso correctamente.\n"; // Muestra un mensaje de que la memoria se asignó correctamente
 }
 
+// Definimos la función que elimina el proceso más reciente (Pop)
 void pop(Proceso*& pila) {
-    if (pila == NULL) {
-        cout << "No hay procesos en la pila de memoria.\n";
+    if (pila == NULL) { // Si la pila está en blanco, se notifica al usuario con un mensaje
+        cout << "No hay procesos en la pila de memoria.\n"; 
         return;
     }
 
-    Proceso* temp = pila;
-    pila = pila->siguiente;
+    Proceso* temp = pila;  // El "temp" esta con el nodo que está en la cima
+    pila = pila->siguiente; // Se actualiza la cima al siguiente nodo
 
-    cout << "Memoria liberada del proceso:\n";
+    cout << "Memoria liberada del proceso:\n"; // Despues se muestran los datos del proceso eliminado
     cout << "ID: " << temp->id << " | Nombre: " << temp->nombre << " | Memoria: " << temp->porcentajeMemoria << "%\n";
 
-    delete temp;
+    delete temp; // Tambien elimina el nodo de memoria
 }
 
+// Definimos la función que muestra el estado actual de la memoria
+// Este va a recorrer la pila y sumar el total de memoria usada y luego mostrarla
 void mostrarPila(Proceso* pila) {
-    if (pila == NULL) {
+    if (pila == NULL) {  // Verifica si la pila está vacía
         cout << "La pila de memoria esta vacia.\n";
-        return;
+        return; // Si no hay procesos termina la función
     }
 
-    Proceso* temp = pila;
-    float memoriaTotal = 0;
+    Proceso* temp = pila; // Se declara un puntero temporal para recorrer la pila
+    float memoriaTotal = 0;  // Usa una variable para acumular el porcentaje total de memoria usada
 
     cout << "\n--- Estado actual de la memoria (Pila) ---\n";
-    while (temp != NULL) {
-        cout << "ID: " << temp->id << " | Nombre: " << temp->nombre 
+    while (temp != NULL) { // Recorre cada nodo de la pila
+        cout << "ID: " << temp->id << " | Nombre: " << temp->nombre  // Muestra los datos del proceso actual
              << " | Prioridad: " << temp->prioridad 
              << " | Memoria: " << temp->porcentajeMemoria << "%\n";
-        memoriaTotal += temp->porcentajeMemoria;
-        temp = temp->siguiente;
+        memoriaTotal += temp->porcentajeMemoria; // Suma el porcentaje de memoria que usa este proceso
+        temp = temp->siguiente; // Luego avanza al siguiente nodo en la pila
     }
 
-    cout << "Memoria total en uso: " << memoriaTotal << "%\n";
-    if (memoriaTotal > 100) {
+    cout << "Memoria total en uso: " << memoriaTotal << "%\n"; // Muestra el total de memoria que se usa en un mensaje
+    if (memoriaTotal > 100) {  // Y si el total supera el 100%, se lanza una advertencia
         cout << "Advertencia: Memoria excedida.\n";
     }
 }
