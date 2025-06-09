@@ -19,9 +19,6 @@ void insertarProceso(Proceso*& lista, int id, const string& nombre, int priorida
     nuevo->nombre = nombre;
     nuevo->prioridad = prioridad;
 
-    cout << "Ingrese el porcentaje de memoria que usa el proceso: ";
-    cin >> nuevo->porcentajeMemoria;
-
     nuevo->siguiente = NULL;
 
     if (lista == NULL) {
@@ -44,16 +41,11 @@ void mostrarProcesos(const Proceso* lista) {
         cout << "ID: " << temp->id ;
         cout << " | Nombre: " << temp->nombre ;
         cout << " | Prioridad: " << temp->prioridad ;
-        cout << " | Memoria: " << temp->porcentajeMemoria << "%\n";
-        totalMemoria += temp->porcentajeMemoria;
+        
         temp = temp->siguiente;
     }
 
-    cout << "Porcentaje de memoria total en uso: " << totalMemoria << "%\n";
-
-    if (totalMemoria > 100.00) {
-        cout << "\nNo hay suficiente espacio de memoria \n";
-    }
+    
 }
 
 void eliminarProceso(Proceso*& lista, int id) {
