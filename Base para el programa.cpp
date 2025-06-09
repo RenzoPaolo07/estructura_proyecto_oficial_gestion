@@ -14,9 +14,9 @@ struct Proceso {
 
 
 void insertarProceso(Proceso*& lista, int id, const string& nombre, int prioridad) {
- // Explicación de parametros: 
 
-    Proceso* nuevo = new Proceso; //Creación de un nuevo nodo
+
+    Proceso* nuevo = new Proceso; //Creacion de un nuevo nodo
     nuevo->id = id;
     nuevo->nombre = nombre;
     nuevo->prioridad = prioridad;
@@ -44,7 +44,7 @@ void mostrarProcesos(const Proceso* lista) {
     while (temp != NULL) { // en este se recorre todos los nodos mostrando sus datos: id, nombre, prioridad
         cout << "ID: " << temp->id ;
         cout << " | Nombre: " << temp->nombre ;
-        cout << " | Prioridad: " << temp->prioridad ;
+        cout << " | Prioridad: " << temp->prioridad<<endl ;
         
         temp = temp->siguiente; //Avanamos al siguiente nodo en cada iteracion
     }
@@ -113,7 +113,7 @@ void encolar(Proceso* p) {
     if (frente == NULL || p->prioridad > frente->proceso->prioridad) {
         nuevo->siguiente = frente;
         frente = nuevo;
-     // Si la cola está vacía o el proceso tiene mayor prioridad que el primero entonces se inserta el nuevo nodo al inicio
+     // Si la cola esta vacia o el proceso tiene mayor prioridad que el primero entonces se inserta el nuevo nodo al inicio
     } else {
         NodoCola* actual = frente;
         while (actual->siguiente != NULL && p->prioridad <= actual->siguiente->proceso->prioridad) {
