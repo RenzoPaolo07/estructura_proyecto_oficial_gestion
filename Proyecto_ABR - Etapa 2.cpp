@@ -1,9 +1,9 @@
 //Codigo para las respuestas del informe parte 2
-	//Primero definimos la estructura Persona, que sera la base del arbol:
 #include <iostream>
 #include <string>
 using namespace std;
 
+// Estructura de un nodo del árbol
 struct Persona {
     int anioNacimiento;
     string nombre;
@@ -11,7 +11,7 @@ struct Persona {
     Persona* derecha;
 };
 
-//1. ¿Que informacion se debe almacenar en cada nodo? - Ejemplo:
+// Crear un nuevo nodo
 	Persona* crearPersona(int anio, string nombre) {
 	    Persona* nueva = new Persona;
 	    nueva->anioNacimiento = anio;
@@ -21,8 +21,7 @@ struct Persona {
 	    return nueva;
 	}
 
-//2. ¿Como insertar y eliminar miembros del arbol sin romper su estructura? - Ejemplos:
-	//Insercion:
+// Insertar una persona en el árbol
 	void insertarPersona(Persona*& raiz, int anio, string nombre) {
 	    if (raiz == NULL) {
 	        raiz = crearPersona(anio, nombre);
@@ -31,11 +30,20 @@ struct Persona {
 	    } else if (anio > raiz->anioNacimiento) {
 	        insertarPersona(raiz->derecha, anio, nombre);
 	    } else {
-	        cout << "Ya existe una persona con ese año.\n";
+	        cout << "Ya existe una persona con ese año de nacimiento.\n";
 	    }
 	}
 	
-	//Eliminacion solo en caso de una hoja:
+// Buscar una persona por año de nacimiento
+	bool buscarPersona(Persona* raiz, int anio) {
+	    if (raiz == NULL) return false;
+	
+	    if (anio == raiz->anioNacimiento) return true;
+	    else if (anio < raiz->anioNacimiento) return buscarPersona(raiz->izquierda, anio);
+	    else return buscarPersona(raiz->derecha, anio);
+	}
+	
+//Eliminacion de una persona, solo en caso de una hoja:
 	void eliminarHoja(Persona*& raiz, int anio) {
     if (raiz == NULL) return;
     
@@ -44,19 +52,18 @@ struct Persona {
     } else if (anio > raiz->anioNacimiento) {
         eliminarHoja(raiz->derecha, anio);
     } else {
-        // Solo eliminamos si es hoja
+        // Verificamos si es hoja
         if (raiz->izquierda == NULL && raiz->derecha == NULL) {
             delete raiz;
             raiz = NULL;
-            cout << "Persona eliminada.\n";
+            cout << "Persona eliminada correctamente.\n";
         } else {
             cout << "No se puede eliminar, no es una hoja.\n";
         	}
     	}
 	}
 
-//3. ¿Que metodos permiten recorrer el arbol para visualizar la genealogia? - Ejemplos:
-	//Inorden:
+// Recorrido INORDEN: Funcion de más antiguo a más reciente
 	void inorden(Persona* raiz) {
 	    if (raiz != NULL) {
 	        inorden(raiz->izquierda);
@@ -64,7 +71,7 @@ struct Persona {
 	        inorden(raiz->derecha);
 	    }
 	}
-	//Preorden:
+// Recorrido PREORDEN: Se usa para jerarquía generacional
 	void preorden(Persona* raiz) {
 	    if (raiz != NULL) {
 	        cout << raiz->nombre << " (" << raiz->anioNacimiento << ")\n";
@@ -72,7 +79,7 @@ struct Persona {
 	        preorden(raiz->derecha);
 	    }
 	}
-	//Postorden:
+// Recorrido POSTORDEN: Se usa para eliminaciones
 	void postorden(Persona* raiz) {
 	    if (raiz != NULL) {
 	        postorden(raiz->izquierda);
@@ -81,12 +88,39 @@ struct Persona {
 	    }
 	}
 	
-//4.¿Como determinar si un miembro pertenece a una rama especifica? - Ejemplo:
-	bool buscarPersona(Persona* raiz, int anio) {
-	    if (raiz == NULL) return false;
+// Función principal para probar
+	int main() {
+	    setlocale(LC_CTYPE,"Spanish");
+		Persona* raiz = NULL;
+	    
 	
-	    if (anio == raiz->anioNacimiento) return true;
-	    else if (anio < raiz->anioNacimiento) return buscarPersona(raiz->izquierda, anio);
-	    else return buscarPersona(raiz->derecha, anio);
+	    // Inserción de miembros (civilización ficticia solo de ejemplo)
+	    insertarPersona(raiz, 1950, "Apu");
+	    insertarPersona(raiz, 1980, "Inti");
+	    insertarPersona(raiz, 1930, "Manco");
+	    insertarPersona(raiz, 1995, "Killa");
+	    insertarPersona(raiz, 1970, "Sumaq");
+	
+	    cout << "\n<--- Árbol Genealógico (Cronológicamente) --->\n";
+	    inorden(raiz);
+	
+	    cout << "\n<--- Buscar año 1980 --->\n";
+	    if (buscarPersona(raiz, 1980)) cout << "Persona encontrada.\n";
+	    else cout << "No se encontró a la persona.\n";
+	
+	    cout << "\n<--- Eliminar hoja con año 1995 --->\n";
+	    eliminarHoja(raiz, 1995);
+	
+	    cout << "\n=== Árbol actualizado (Inorden) ===\n";
+	    inorden(raiz);
+	
+	    cout << "\n=== Recorrido Preorden ===\n";
+	    preorden(raiz);
+	
+	    cout << "\n=== Recorrido Postorden ===\n";
+	    postorden(raiz);
+	
+	    return 0;
 	}
+
 
