@@ -1,4 +1,4 @@
-//Codigo para las respuestas del informe
+//Codigo para las respuestas del informe parte 2
 	//Primero definimos la estructura Persona, que sera la base del arbol:
 #include <iostream>
 #include <string>
