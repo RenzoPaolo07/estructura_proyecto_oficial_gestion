@@ -41,23 +41,47 @@ bool buscarPersona(Persona* raiz, int anio) {
     else return buscarPersona(raiz->derecha, anio);
 }
 
-void eliminarHoja(Persona*& raiz, int anio) {
-    if (raiz == NULL) return;
-    
+Persona* encontrarMinimo(Persona* nodo) {
+    while (nodo->izquierda != NULL)
+        nodo = nodo->izquierda;
+    return nodo;
+}
+
+
+Persona* eliminarPersona(Persona* raiz, int anio) {
+    if (raiz == NULL) return NULL;
+
     if (anio < raiz->anioNacimiento) {
-        eliminarHoja(raiz->izquierda, anio);
+        raiz->izquierda = eliminarPersona(raiz->izquierda, anio);
     } else if (anio > raiz->anioNacimiento) {
-        eliminarHoja(raiz->derecha, anio);
+        raiz->derecha = eliminarPersona(raiz->derecha, anio);
     } else {
-        // Verificamos si es hoja
+        // Nodo encontrado
         if (raiz->izquierda == NULL && raiz->derecha == NULL) {
+        	cout << "Persona eliminada correctamente (era hoja).\n";
             delete raiz;
-            raiz = NULL;
-            cout << "Persona eliminada correctamente.\n";
+            
+            return NULL;
+        } else if (raiz->izquierda == NULL) {
+        	cout << "Persona eliminada correctamente (tenía un hijo derecho).\n";
+            Persona* temp = raiz->derecha;
+            delete raiz;
+            return temp;
+        } else if (raiz->derecha == NULL) {
+        	cout << "Persona eliminada correctamente (tenía un hijo izquierdo).\n";
+            Persona* temp = raiz->izquierda;
+            delete raiz;
+            return temp;
         } else {
-            cout << "No se puede eliminar, no es una hoja.\n";
-        	}
-    	}
+            // Dos hijos
+            Persona* temp = encontrarMinimo(raiz->derecha);
+            raiz->anioNacimiento = temp->anioNacimiento;
+            raiz->nombre = temp->nombre;
+            raiz->derecha = eliminarPersona(raiz->derecha, temp->anioNacimiento);
+            cout << "Persona eliminada correctamente (tenía dos hijos, se reemplazó por su sucesor).\n";
+        }
+    }
+    return raiz;
 }
 
 
@@ -66,15 +90,15 @@ void eliminarHoja(Persona*& raiz, int anio) {
 void inorden(Persona* raiz) {
     if (raiz != NULL) {
         inorden(raiz->izquierda);
-        cout << raiz->nombre << " (" << raiz->anioNacimiento << ")\n";
+        cout << raiz->nombre << " \t(" << raiz->anioNacimiento << ")\n";
         inorden(raiz->derecha);
     }
 }
 
-// Recorrido PREORDEN: Se usa para jerarqu?a generacional
+// Recorrido PREORDEN: Se usa para jerarquia generacional
 void preorden(Persona* raiz) {
     if (raiz != NULL) {
-        cout << raiz->nombre << " (" << raiz->anioNacimiento << ")\n";
+        cout << raiz->nombre << " \t(" << raiz->anioNacimiento << ")\n";
         preorden(raiz->izquierda);
         preorden(raiz->derecha);
     }
@@ -85,7 +109,7 @@ void postorden(Persona* raiz) {
     if (raiz != NULL) {
         postorden(raiz->izquierda);
         postorden(raiz->derecha);
-        cout << raiz->nombre << " (" << raiz->anioNacimiento << ")\n";
+        cout << raiz->nombre << " \t(" << raiz->anioNacimiento << ")\n";
     }
 }
 
@@ -94,17 +118,18 @@ void mostrarJerarquia(Persona* raiz, int nivel = 0) {
     if (raiz != NULL) {
         mostrarJerarquia(raiz->derecha, nivel + 1);
         for (int i = 0; i < nivel; i++) cout << "   ";
-        cout << "|-- " << raiz->nombre << " (" << raiz->anioNacimiento << ")\n";
+        cout << "|--- " << raiz->nombre << " (" << raiz->anioNacimiento << ")\n";
         mostrarJerarquia(raiz->izquierda, nivel + 1);
     }
 }
+
 
 // Menú 
 void menu() {
     cout << "\n--- Árbol Genealógico (ABB) ---\n";
     cout << "1. Insertar persona\n";
     cout << "2. Buscar persona\n";
-    cout << "3. Eliminar hoja\n";
+    cout << "3. Eliminar persona\n";
     cout << "4. Mostrar inorden\n";
     cout << "5. Mostrar preorden\n";
     cout << "6. Mostrar postorden\n";
@@ -142,20 +167,20 @@ int main() {
                     cout << "No se encontró a la persona.\n";
                 break;
             case 3:
-                cout << "Ingrese año a eliminar (solo si es hoja): ";
+                cout << "Ingrese año a eliminar: ";
                 cin >> anio;
-                eliminarHoja(raiz, anio);
+                raiz = eliminarPersona(raiz, anio);
                 break;
             case 4:
-                cout << "\n--- Recorrido Inorden (IRD) ---\n";
+                cout << "\n--- Recorrido Inorden (IRD - De mas antiguo a mas reciente) ---\n";
                 inorden(raiz);
                 break;
             case 5:
-                cout << "\n--- Recorrido Preorden (RID) ---\n";
+                cout << "\n--- Recorrido Preorden (RID - Jerarquia generacional) ---\n";
                 preorden(raiz);
                 break;
             case 6:
-                cout << "\n--- Recorrido Postorden (IDR) ---\n";
+                cout << "\n--- Recorrido Postorden (IDR - Para eliminaciones) ---\n";
                 postorden(raiz);
                 break;
             case 7:
@@ -168,7 +193,7 @@ int main() {
             default:
                 cout << "Opción inválida.\n";
         }
-    } while (opcion != 0);
+    } while (opcion != 8);
 
     return 0;
 }
