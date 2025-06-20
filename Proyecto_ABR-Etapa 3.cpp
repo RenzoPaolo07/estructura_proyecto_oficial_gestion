@@ -4,84 +4,84 @@ using namespace std;
 
 // Estructura del nodo
 struct Persona {
-    int anioNacimiento;
-    string nombre;
-    Persona* izquierda;
-    Persona* derecha;
+    int anioNacimiento;  //Guarda el año ingresado
+    string nombre; // El nombre de la persona
+    Persona* izquierda; //Puntero al hijo o nodo que esta a la izquierda
+    Persona* derecha; //Puntero al hijo o nodo que esta a la derecha
 };
 
-
+// Función para crear una nueva persona
 Persona* crearPersona(int anio, string nombre) {
-    Persona* nueva = new Persona;
-    nueva->anioNacimiento = anio;
-    nueva->nombre = nombre;
-    nueva->izquierda = NULL;
-    nueva->derecha = NULL;
-    return nueva;
+    Persona* nueva = new Persona; // Se crea un espacio para la siguiente persona
+    nueva->anioNacimiento = anio; //Guarda un nuevo año
+    nueva->nombre = nombre; // Guarda nombre
+    nueva->izquierda = NULL; // No deja nada al lado izquierdo
+    nueva->derecha = NULL; //No deja nada al lado derecho
+    return nueva; //Devuelve esa nueva persona para insertar en el arbol
 }
 
-
+// Función de Insertacion de Persona 
 void insertarPersona(Persona*& raiz, int anio, string nombre) {
-    if (raiz == NULL) {
+    if (raiz == NULL) {  //Condicion que si el árbol esta vacio o se llego a un espacio libre, crea a la persona nueva
         raiz = crearPersona(anio, nombre);
-    } else if (anio < raiz->anioNacimiento) {
+    } else if (anio < raiz->anioNacimiento) { // Y si el año es menor, se inserta a la persona a la izquierda, por asi decirlo a las personas viejas
         insertarPersona(raiz->izquierda, anio, nombre);
-    } else if (anio > raiz->anioNacimiento) {
+    } else if (anio > raiz->anioNacimiento) { // Y si el año es mayor, se inserta a la persona a la derecha, siendo esta más joven.
         insertarPersona(raiz->derecha, anio, nombre);
-    } else {
-        cout << "Ya existe una persona con ese a�o de nacimiento.\n";
+    } else { //Si ya hay alguien con este mismo año, no permitira agregar a esa persona
+        cout << "Ya existe una persona con ese año de nacimiento.\n"; // Y le tira un mensaje de que ya existe ese individuo
     }
 }
 
-
+// Función de Busqueda de Persona en el Arbol
 bool buscarPersona(Persona* raiz, int anio) {
-    if (raiz == NULL) return false;
-    if (anio == raiz->anioNacimiento) return true;
-    else if (anio < raiz->anioNacimiento) return buscarPersona(raiz->izquierda, anio);
-    else return buscarPersona(raiz->derecha, anio);
+    if (raiz == NULL) return false;  // Si el árbol está no se encuentra despues de buscar, no existe
+    if (anio == raiz->anioNacimiento) return true; // Si el año ingresado coincide con el nodo, sí existe
+    else if (anio < raiz->anioNacimiento) return buscarPersona(raiz->izquierda, anio); // Si ve que es menor, busca por la izquierda
+    else return buscarPersona(raiz->derecha, anio); // Si ve que es mayor, busca por la derecha
 }
-
+// Busca el nodo con el año mas pequeño, empezando en un punto dado
 Persona* encontrarMinimo(Persona* nodo) {
-    while (nodo->izquierda != NULL)
-        nodo = nodo->izquierda;
-    return nodo;
+    while (nodo->izquierda != NULL) // Si existe alguien mas "viejo" sera a la izquierda
+        nodo = nodo->izquierda; // Sigue avanzando a la izquierda
+    return nodo; // Y retorna al más viejo encontrado
 }
 
-
+//Elimina a una persona del árbol segun el año ingresado
 Persona* eliminarPersona(Persona* raiz, int anio) {
-    if (raiz == NULL) return NULL;
+    if (raiz == NULL) return NULL; // Si el árbol está vacio o no hay el nodo, n ose hace nada
 
-    if (anio < raiz->anioNacimiento) {
+    if (anio < raiz->anioNacimiento) { // Si el año es , seguira buscando por izquierda
         raiz->izquierda = eliminarPersona(raiz->izquierda, anio);
-    } else if (anio > raiz->anioNacimiento) {
+    } else if (anio > raiz->anioNacimiento) {  // Si el año es mayor, seguira buscando por la derecha
         raiz->derecha = eliminarPersona(raiz->derecha, anio);
-    } else {
+    } else { //Si el año coincide, ya se encontro a la persona a eliminar
         // Nodo encontrado
-        if (raiz->izquierda == NULL && raiz->derecha == NULL) {
+        if (raiz->izquierda == NULL && raiz->derecha == NULL) { // En este caso si la persona no tiene hijos
         	cout << "Persona eliminada correctamente (era hoja).\n";
-            delete raiz;
+            delete raiz; // Borra y libera espacio en la memoria
             
-            return NULL;
-        } else if (raiz->izquierda == NULL) {
-        	cout << "Persona eliminada correctamente (ten�a un hijo derecho).\n";
-            Persona* temp = raiz->derecha;
-            delete raiz;
-            return temp;
-        } else if (raiz->derecha == NULL) {
-        	cout << "Persona eliminada correctamente (ten�a un hijo izquierdo).\n";
-            Persona* temp = raiz->izquierda;
-            delete raiz;
-            return temp;
-        } else {
-            // Dos hijos
-            Persona* temp = encontrarMinimo(raiz->derecha);
-            raiz->anioNacimiento = temp->anioNacimiento;
+            return NULL; // Retorna NULL para quitar el nodo
+        } else if (raiz->izquierda == NULL) { // En este caso, si tiene un hijo en la derecha
+        	cout << "Persona eliminada correctamente (tenía un hijo derecho).\n";
+            Persona* temp = raiz->derecha; // Guarda al hijo derecho
+            delete raiz; // Elimina el Nodo Raiz
+            return temp; // Conecta el hijo derecho con el padre del nodo eliminado
+        } else if (raiz->derecha == NULL) { // Ahora si solo  tiene hijo izquierdo
+        	cout << "Persona eliminada correctamente (tenía un hijo izquierdo).\n";
+            Persona* temp = raiz->izquierda; // Guarda el hijo izquiero
+            delete raiz; // Elimina el nodo raiz
+            return temp; // Conectamos el hijo izquierdo con el padre del nodo eliminado
+        } else { 
+            // Si tiene dos hijos
+            Persona* temp = encontrarMinimo(raiz->derecha); //Busca el nodo con el año más pequeño del subárbol derecho
+            raiz->anioNacimiento = temp->anioNacimiento; //Remplaza los datos del nodo actual con los del sucesor
             raiz->nombre = temp->nombre;
-            raiz->derecha = eliminarPersona(raiz->derecha, temp->anioNacimiento);
-            cout << "Persona eliminada correctamente (ten�a dos hijos, se reemplaz� por su sucesor).\n";
+            raiz->derecha = eliminarPersona(raiz->derecha, temp->anioNacimiento); // Elimina el sucesor que ya copiamos
+            cout << "Persona eliminada correctamente (tenía dos hijos, se reemplazó por su sucesor).\n";
         }
     }
-    return raiz;
+    return raiz; // Retorna la raiz modificada
 }
 
 
@@ -113,7 +113,7 @@ void postorden(Persona* raiz) {
     }
 }
 
-//Mostrar jerarqu�a de forma visual
+//Mostrar jerarquía de forma visual
 void mostrarJerarquia(Persona* raiz, int nivel = 0) {
     if (raiz != NULL) {
         mostrarJerarquia(raiz->derecha, nivel + 1);
@@ -124,18 +124,18 @@ void mostrarJerarquia(Persona* raiz, int nivel = 0) {
 }
 
 
-// Men� 
+// Menú 
 void menu() {
-    cout << "\n--- �rbol Geneal�gico (ABB) ---\n";
+    cout << "\n--- Árbol Genealógico (ABB) ---\n";
     cout << "1. Insertar persona\n";
     cout << "2. Buscar persona\n";
     cout << "3. Eliminar persona\n";
     cout << "4. Mostrar inorden\n";
     cout << "5. Mostrar preorden\n";
     cout << "6. Mostrar postorden\n";
-    cout << "7. Visualizar jerarqu�a\n";
+    cout << "7. Visualizar jerarquía\n";
     cout << "8. Salir\n";
-    cout << "Seleccione una opci�n: ";
+    cout << "Seleccione una opción: ";
 }
 
 
@@ -154,20 +154,20 @@ int main() {
                 cout << "Ingrese nombre: ";
                 cin.ignore();
                 getline(cin, nombre);
-                cout << "Ingrese a�o de nacimiento: ";
+                cout << "Ingrese año de nacimiento: ";
                 cin >> anio;
                 insertarPersona(raiz, anio, nombre);
                 break;
             case 2:
-                cout << "Ingrese a�o a buscar: ";
+                cout << "Ingrese año a buscar: ";
                 cin >> anio;
                 if (buscarPersona(raiz, anio))
                     cout << "Persona encontrada.\n";
                 else
-                    cout << "No se encontr� a la persona.\n";
+                    cout << "No se encontró a la persona.\n";
                 break;
             case 3:
-                cout << "Ingrese a�o a eliminar: ";
+                cout << "Ingrese año a eliminar: ";
                 cin >> anio;
                 raiz = eliminarPersona(raiz, anio);
                 break;
@@ -184,14 +184,14 @@ int main() {
                 postorden(raiz);
                 break;
             case 7:
-                cout << "\n--- Visualizaci�n Jer�rquica del �rbol ---\n";
+                cout << "\n--- Visualización Jerárquica del Árbol ---\n";
                 mostrarJerarquia(raiz);
                 break;
             case 8:
                 cout << "Saliendo del programa.\n";
                 break;
             default:
-                cout << "Opci�n inv�lida.\n";
+                cout << "Opción inválida.\n";
         }
     } while (opcion != 8);
 
