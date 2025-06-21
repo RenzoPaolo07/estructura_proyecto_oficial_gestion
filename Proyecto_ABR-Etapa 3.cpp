@@ -36,7 +36,11 @@ void insertarPersona(Persona*& raiz, int anio, string nombre) {
 // Función de Busqueda de Persona en el Arbol
 bool buscarPersona(Persona* raiz, int anio) {
     if (raiz == NULL) return false;  // Si el árbol está no se encuentra despues de buscar, no existe
-    if (anio == raiz->anioNacimiento) return true; // Si el año ingresado coincide con el nodo, sí existe
+    if (anio == raiz->anioNacimiento) {
+    	cout<<"Persona encontrada: "<<raiz->nombre<<"("<<raiz->anioNacimiento<<")\n";
+    	return true; // Si el año ingresado coincide con el nodo, sí existe
+	}
+	
     else if (anio < raiz->anioNacimiento) return buscarPersona(raiz->izquierda, anio); // Si ve que es menor, busca por la izquierda
     else return buscarPersona(raiz->derecha, anio); // Si ve que es mayor, busca por la derecha
 }
@@ -57,18 +61,19 @@ Persona* eliminarPersona(Persona* raiz, int anio) {
         raiz->derecha = eliminarPersona(raiz->derecha, anio);
     } else { //Si el año coincide, ya se encontro a la persona a eliminar
         // Nodo encontrado
+        string nombreEliminado = raiz->nombre;
         if (raiz->izquierda == NULL && raiz->derecha == NULL) { // En este caso si la persona no tiene hijos
-        	cout << "Persona eliminada correctamente (era hoja).\n";
+        	cout << "Persona eliminada: " << nombreEliminado << " (" << raiz->anioNacimiento << ") [era hoja]\n";
             delete raiz; // Borra y libera espacio en la memoria
             
             return NULL; // Retorna NULL para quitar el nodo
         } else if (raiz->izquierda == NULL) { // En este caso, si tiene un hijo en la derecha
-        	cout << "Persona eliminada correctamente (tenía un hijo derecho).\n";
+        	cout << "Persona eliminada: " << nombreEliminado << " (" << raiz->anioNacimiento << ") [ten�a un hijo derecho]\n";
             Persona* temp = raiz->derecha; // Guarda al hijo derecho
             delete raiz; // Elimina el Nodo Raiz
             return temp; // Conecta el hijo derecho con el padre del nodo eliminado
         } else if (raiz->derecha == NULL) { // Ahora si solo  tiene hijo izquierdo
-        	cout << "Persona eliminada correctamente (tenía un hijo izquierdo).\n";
+        	cout << "Persona eliminada: " << nombreEliminado << " (" << raiz->anioNacimiento << ") [ten�a un hijo izquierdo]\n";
             Persona* temp = raiz->izquierda; // Guarda el hijo izquiero
             delete raiz; // Elimina el nodo raiz
             return temp; // Conectamos el hijo izquierdo con el padre del nodo eliminado
@@ -78,7 +83,7 @@ Persona* eliminarPersona(Persona* raiz, int anio) {
             raiz->anioNacimiento = temp->anioNacimiento; //Remplaza los datos del nodo actual con los del sucesor
             raiz->nombre = temp->nombre;
             raiz->derecha = eliminarPersona(raiz->derecha, temp->anioNacimiento); // Elimina el sucesor que ya copiamos
-            cout << "Persona eliminada correctamente (tenía dos hijos, se reemplazó por su sucesor).\n";
+            cout << "Persona eliminada: " << nombreEliminado << " (" << raiz->anioNacimiento << ") [ten�a dos hijos, se reemplaz� por " << temp->nombre << "]\n";
         }
     }
     return raiz; // Retorna la raiz modificada
@@ -88,28 +93,28 @@ Persona* eliminarPersona(Persona* raiz, int anio) {
 
 // Recorrido INORDEN: Funcion de m?s antiguo a m?s reciente
 void inorden(Persona* raiz) {
-    if (raiz != NULL) {
-        inorden(raiz->izquierda);
-        cout << raiz->nombre << " \t(" << raiz->anioNacimiento << ")\n";
-        inorden(raiz->derecha);
+    if (raiz != NULL) { //En caso de que la raiz no este vacia
+        inorden(raiz->izquierda); //Usando una llamada recursiva visita al hijo izquierdo
+        cout << raiz->nombre << " \t(" << raiz->anioNacimiento << ")\n"; //Luego imprime el actual (ra�z)
+        inorden(raiz->derecha); //Usando una llamada recursiva visita al hijo derecho
     }
 }
 
 // Recorrido PREORDEN: Se usa para jerarquia generacional
 void preorden(Persona* raiz) {
     if (raiz != NULL) {
-        cout << raiz->nombre << " \t(" << raiz->anioNacimiento << ")\n";
-        preorden(raiz->izquierda);
-        preorden(raiz->derecha);
+        cout << raiz->nombre << " \t(" << raiz->anioNacimiento << ")\n"; //Primero imprime el actual (ra�z)
+        preorden(raiz->izquierda); //visita al hijo izquierdo
+        preorden(raiz->derecha); //visita al hijo derecho
     }
 }
 
 // Recorrido POSTORDEN: Se usa para eliminaciones
 void postorden(Persona* raiz) {
     if (raiz != NULL) {
-        postorden(raiz->izquierda);
-        postorden(raiz->derecha);
-        cout << raiz->nombre << " \t(" << raiz->anioNacimiento << ")\n";
+        postorden(raiz->izquierda); //visita al hijo izquierdo
+        postorden(raiz->derecha); //visita al hijo derecho
+        cout << raiz->nombre << " \t(" << raiz->anioNacimiento << ")\n"; //Imprime el nodo actual
     }
 }
 
@@ -161,10 +166,9 @@ int main() {
             case 2:
                 cout << "Ingrese año a buscar: ";
                 cin >> anio;
-                if (buscarPersona(raiz, anio))
-                    cout << "Persona encontrada.\n";
-                else
-                    cout << "No se encontró a la persona.\n";
+                if (!buscarPersona(raiz, anio))
+                    cout << "No se encontr� a la persona.\n";
+                
                 break;
             case 3:
                 cout << "Ingrese año a eliminar: ";
